@@ -1,0 +1,44 @@
+#jinja2: lstrip_blocks: "True"
+# Ansible generated config for redirects
+
+{% for site in redirects %}
+<VirtualHost *:80>
+    ServerName {{ site.server_name }}
+    {% for server_alias in site.server_aliases %}
+    ServerAlias {{ server_alias }}
+    {% endfor %}
+
+    DocumentRoot /srv/www/default
+
+    RewriteEngine on
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge(/[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-]*)?$
+    RewriteRule ^/.* {{ site.uri }} [R=301,L]
+
+    CustomLog ${APACHE_LOG_DIR}/redirects_access.log vhost_combined
+    ErrorLog ${APACHE_LOG_DIR}/redirects_error.log
+</VirtualHost>
+
+{% if 'ssl' in site %}
+<VirtualHost *:443>
+    SSLEngine on
+    SSLCertificateFile {{ site.ssl.cert }}
+    SSLCertificateKeyFile {{ site.ssl.key }}
+    {% if 'ca_chain' in site.ssl %}
+    SSLCertificateChainFile {{ site.ssl.ca_chain }}
+    {% endif %}
+
+    ServerName {{ site.server_name }}
+    {% for server_alias in site.server_aliases %}
+    ServerAlias {{ server_alias }}
+    {% endfor %}
+
+    DocumentRoot /srv/www/default
+
+    Redirect 301 / {{ site.uri }}
+
+    CustomLog ${APACHE_LOG_DIR}/redirects_access.log vhost_combined
+    ErrorLog ${APACHE_LOG_DIR}/redirects_error.log
+</VirtualHost>
+{% endif %}
+
+{% endfor %}

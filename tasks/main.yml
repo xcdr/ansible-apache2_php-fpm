@@ -1,0 +1,35 @@
+---
+- name: Install required packages
+  apt:
+    name:
+      - php-fpm
+      - php-zip
+      - php-mysql
+      - php-json
+      - php-opcache
+      - php-curl
+      - php-gd
+      - php-xml
+      - php-mbstring
+      - php-imagick
+      - ssl-cert
+      - proftpd-basic
+    state: present
+
+- apache2_module:
+    state: present
+    name: rewrite
+    ignore_configcheck: yes
+  notify: restart apache2
+
+- include_tasks: configure_account.yml
+  loop: "{{ sites }}"
+  loop_control:
+    loop_var: site
+
+- include_tasks: configure_apache-fpm.yml
+  loop: "{{ sites }}"
+  loop_control:
+    loop_var: site
+
+- include_tasks: configure_apache-redirects.yml

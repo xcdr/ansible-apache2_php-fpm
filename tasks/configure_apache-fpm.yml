@@ -1,0 +1,24 @@
+---
+- name: "Generate vhost config for {{ site.name }}"
+  template:
+    src: apache_vhost.j2
+    dest: "/etc/apache2/sites-available/{{ site.name }}.conf"
+  notify: restart apache2
+
+- name: "Generate php-fpm config for {{ site.name }}"
+  template:
+    src: php-fpm.j2
+    dest: "/etc/php/{{ php_ver }}/fpm/pool.d/{{ site.name }}.conf"
+  notify: restart php-fpm
+
+- name: "Generate logrotate config for {{ site.name }}"
+  template:
+    src: logrotate.j2
+    dest: "/etc/logrotate.d/php-fpm_{{ site.name }}"
+
+- name: "Enable apache2 vhost for {{ site.name }}"
+  file:
+    src: "/etc/apache2/sites-available/{{ site.name }}.conf"
+    dest: "/etc/apache2/sites-enabled/{{ site.name }}.conf"
+    state: link
+  notify: restart apache2

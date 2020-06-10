@@ -1,0 +1,55 @@
+---
+- set_fact:
+    wp_cron_enable: "{{ 'present' if site.wp.enabled == true else 'absent' }}"
+
+- name: Add groups
+  group:
+    gid: "{{ site.id }}"
+    name: "{{ site.name }}"
+    state: present
+
+- name: Add users
+  user:
+    uid: "{{ site.id }}"
+    name: "{{ site.name }}"
+    comment: "Web app - {{ site.name }}"
+    group: "{{ site.name }}"
+    home: "/srv/www/{{ site.name }}"
+    shell: /usr/bin/false
+
+- name: "Append www-data to {{ site.name }} group"
+  user:
+    name: www-data
+    groups: "{{ site.name }}"
+    append: yes
+
+- name: Change home directory permissions
+  file:
+    path: "/srv/www/{{ site.name }}"
+    owner: "{{ site.name }}"
+    group: "{{ site.name }}"
+    state: directory
+    mode: '0750'
+
+- name: Create directory tree
+  file:
+    path: "{{ item }}"
+    owner: "{{ site.name }}"
+    group: "{{ site.name }}"
+    state: directory
+    mode: '0750'
+  loop:
+    - "/srv/www/{{ site.name }}/log"
+    - "/srv/www/{{ site.name }}/tmp"
+    - "/srv/www/{{ site.name }}/tmp/sessions"
+    - "/srv/www/{{ site.name }}/tmp/uploads"
+    - "/srv/www/{{ site.name }}/wwwroot"
+
+- name: Ensure a wp-cron job is executed for https://{{site.server_name}}"
+  cron:
+    name: "WP-CRON (https://{{site.server_name}})"
+    user: "{{ site.name }}"
+    minute: "*/10"
+    hour: "*"
+    job: "/usr/bin/curl https://{{site.server_name}}/wp-cron.php"
+    state: "{{ wp_cron_enable }}"

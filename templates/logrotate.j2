@@ -1,0 +1,14 @@
+#jinja2: lstrip_blocks: "True"
+# Ansible generated config for: {{ site.server_name }}
+
+/srv/www/{{ site.name }}/log/php-fpm*.log {
+        rotate 7
+        daily
+        missingok
+        notifempty
+        compress
+        delaycompress
+        postrotate
+                /usr/lib/php/php{{ php_ver }}-fpm-reopenlogs
+        endscript
+}
