@@ -2,6 +2,8 @@
 - name: Install required packages
   apt:
     name:
+      - apache2
+      - libapache2-mod-fcgid
       - php-fpm
       - php-zip
       - php-mysql
@@ -18,8 +20,14 @@
 
 - apache2_module:
     state: present
-    name: rewrite
+    name: "{{ item }}"
     ignore_configcheck: yes
+  with_items:
+    - rewrite
+    - ssl
+    - proxy
+    - fcgid
+    - proxy_fcgi
   notify: restart apache2
 
 - include_tasks: configure_account.yml
