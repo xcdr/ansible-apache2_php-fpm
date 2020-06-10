@@ -1,0 +1,22 @@
+galaxy_info:
+  role_name: apache2_php-fpm
+  author: xcdr
+  description: Ansible role for Apache2 and php-fpm, especially for WP hosting
+  license: MIT
+  min_ansible_version: 2.6
+
+  platforms:
+  - name: Debian
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+
+  galaxy_tags:
+    - apache2
+    - php-fpm
+    - debian
+    - ubuntu
+
+dependencies: []
