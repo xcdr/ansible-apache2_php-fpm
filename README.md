@@ -35,7 +35,8 @@ Add this to your `requirements.yml`:
               key: "/etc/letsencrypt/live/example.com/privkey.pem",
               ca_chain: "/etc/letsencrypt/live/example.com/fullchain.pem",
             },
-            wp: {enabled: yes, wordfence: no}
+            wp: {enabled: yes, wordfence: no},
+            php: {memory_limit: 128M, post_max_size: 50M, upload_max_filesize: 45M} # optional overwrite per site
         }
     redirects:
       - {
