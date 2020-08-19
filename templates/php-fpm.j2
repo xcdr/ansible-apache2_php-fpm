@@ -47,13 +47,11 @@ php_admin_value[open_basedir] = /srv/www/$pool/wwwroot/:/srv/www/$pool/tmp/
 php_admin_value[upload_tmp_dir] = /srv/www/$pool/tmp/uploads
 php_admin_value[session.save_path] = /srv/www/$pool/tmp/sessions
 
-pm = dynamic
-pm.max_children = 64
-pm.max_requests = 5000
-pm.max_spare_servers = 16
-pm.min_spare_servers = 2
-pm.process_idle_timeout = 300s
-pm.start_servers = 2
+pm = ondemand
+pm.max_children = 16
+pm.max_requests = 3200
+pm.process_idle_timeout = 120s
+
 ;pm.status_path = /php-fpm/status
 
 ;ping.path = /php-fpm/ping

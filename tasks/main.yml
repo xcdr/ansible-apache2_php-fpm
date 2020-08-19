@@ -14,6 +14,8 @@
       - php-xml
       - php-mbstring
       - php-imagick
+      - php-bcmath
+      - php-apcu
       - ssl-cert
       - proftpd-basic
     state: present
@@ -25,9 +27,12 @@
   with_items:
     - rewrite
     - ssl
+    - http2
     - proxy
     - fcgid
     - proxy_fcgi
+    - expires
+    - headers
   notify: restart apache2
 
 - include_tasks: configure_account.yml

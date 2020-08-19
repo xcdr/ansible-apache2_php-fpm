@@ -11,7 +11,9 @@
 
     DocumentRoot /srv/www/default
 
-    Redirect 301 / https://{{ site.server_name }}/
+    RewriteEngine on
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge(/[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-]*)?$
+    RewriteRule ^/.* https://{{ site.server_name }} [R=301,L]
 
     CustomLog ${APACHE_LOG_DIR}/{{ site.name }}_access.log vhost_combined
     ErrorLog ${APACHE_LOG_DIR}/{{ site.name }}_error.log
@@ -24,6 +26,9 @@
     {% if 'ca_chain' in site.ssl %}
     SSLCertificateChainFile {{ site.ssl.ca_chain }}
     {% endif %}
+
+    Protocols h2 http/1.1
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
 
     ServerName {{ site.server_name }}
     {% for server_alias in site.server_aliases %}
