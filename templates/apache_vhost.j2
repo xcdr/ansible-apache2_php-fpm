@@ -44,7 +44,7 @@
     DocumentRoot /srv/www/{{ site.name }}/wwwroot
 
     <Directory /srv/www/{{ site.name }}>
-        Options -Indexes +FollowSymLinks +MultiViews
+        Options -Indexes +FollowSymLinks -MultiViews
         AllowOverride All
         Require all granted
     </Directory>
